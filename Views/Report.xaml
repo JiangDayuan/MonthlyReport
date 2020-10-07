@@ -1,0 +1,191 @@
+﻿<UserControl x:Class="MonthlyReport.Views.Report"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MonthlyReport.Views"
+             mc:Ignorable="d" 
+             xmlns:converter="clr-namespace:MonthlyReport.Converters"
+             xmlns:model="clr-namespace:MonthlyReport.Models"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:prism="http://prismlibrary.com/"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             d:DesignHeight="800" d:DesignWidth="1600" FontFamily="Microsoft YaHei" 
+             IsEnabled="{Binding Path=UserControlEnable, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+    <UserControl.Resources>
+        <converter:DecimalConverter x:Key="DecimalConverter"/>
+    </UserControl.Resources>
+
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadCommand}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    
+    <Grid HorizontalAlignment="Center" Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Column="0" Grid.Row="0">
+            <Label Content="请输入报销年份：" HorizontalAlignment="Left" VerticalAlignment="Bottom" FontSize="12" 
+                   Padding="0 0 0 5" VerticalContentAlignment="Bottom" Margin="0 0 0 0" Foreground="{DynamicResource MaterialDesignBody}"/>
+            <TextBox Height="30" IsReadOnly="False" Width="120" Foreground="#009688" FontWeight="SemiBold" HorizontalAlignment="Left"
+                     Text="{Binding Path=SelectedYear, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="14" materialDesign:TextFieldAssist.SuffixText="年"/>
+        </StackPanel>
+        <StackPanel Grid.Column="1" Grid.Row="0">
+            <Label Content="请选择报销月份：" HorizontalAlignment="Left" VerticalAlignment="Bottom" FontSize="12" 
+                   Padding="0 0 0 5" VerticalContentAlignment="Bottom" Margin="20 0 0 0" Foreground="{DynamicResource MaterialDesignBody}"/>
+            <ComboBox materialDesign:TextFieldAssist.DecorationVisibility="Collapsed"
+                      materialDesign:TextFieldAssist.SuffixText="月" Margin="20 0 0 0"
+                      Foreground="#009688" VerticalAlignment="Bottom"
+                      ItemsSource="{Binding Path=MonthList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      Text="{Binding Path=SelectedMonth, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      IsEditable="False" Width="90" HorizontalAlignment="Left" FontSize="14" FontWeight="Black"/>
+        </StackPanel>
+        <Button  Grid.Row="0" Grid.Column="2" Margin="20 0 10 0" Height="30" Width="120" FontSize="12" Content="刷新月报预览" Command="{Binding RefreshCommand}"
+                         Style="{StaticResource MaterialDesignRaisedDarkButton}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Padding="0"/>
+        <Button  Grid.Row="0" Grid.Column="3" Margin="50 0 10 0" Height="30" Width="100" FontSize="12" Content="生成月报" HorizontalAlignment="Left"
+                         Foreground="White" Command="{Binding GoCommand}" materialDesign:ButtonAssist.CornerRadius="15" VerticalAlignment="Bottom"
+                         Style="{StaticResource MaterialDesignRaisedAccentButton}" ToolTip="保存当前行程信息后，可在最后输出自律声明"/>
+
+        <ComboBox materialDesign:TextFieldAssist.DecorationVisibility="Collapsed" Grid.Row="1" Grid.Column="0"
+                  Margin="0 10 0 0" Foreground="#009688" VerticalAlignment="Bottom"
+                  ItemsSource="{Binding Path=TicketList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                  Text="{Binding Path=SelectedTicket, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                  IsEditable="False" Width="150" HorizontalAlignment="Left" FontSize="14" FontWeight="Black"/>
+
+        <StackPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left" VerticalAlignment="Bottom" Orientation="Horizontal">
+            <Button Margin="30 0 10 0" Height="30" Width="120" FontSize="12" Content="填写Ticket类型"
+                Foreground="White" Command="{Binding InputCommand}" 
+                Style="{StaticResource MaterialDesignRaisedButton}"/>
+            <Button Margin="30 0 0 0" Height="30" Width="50" FontSize="12" Content="全选" Padding="0"
+                    Command="{Binding AllCheckCommand}"
+                    Style="{StaticResource MaterialDesignOutlinedButton}"/>
+            <Button Margin="0 0 0 0" Height="30" Width="50" FontSize="12" Content="全不选" Padding="0"
+                    Command="{Binding AllUncheckCommand}"
+                    Style="{StaticResource MaterialDesignOutlinedButton}"/>
+            <Button Margin="0 0 0 0" Height="30" Width="50" FontSize="12" Content="双休日" Padding="0"
+                    Command="{Binding WeekendCheckCommand}"
+                    Style="{StaticResource MaterialDesignOutlinedButton}"/>
+        </StackPanel>
+
+
+
+        <ScrollViewer x:Name="Scroll" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Margin="0 20 0 20" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" CanContentScroll="False">
+            <ListBox Grid.Row="1" Margin="0" SelectedIndex="0" MinWidth="310" PreviewMouseWheel="ItemsControl_PreviewMouseWheel"
+                     ItemsSource="{Binding Path=ReportLines, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedLines, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalAlignment="Top" materialDesign:RippleAssist.IsDisabled="True" SelectionMode="Single">
+                <ListBox.ItemTemplate>
+                    <DataTemplate DataType="model:ReportLine">
+                        <Border BorderThickness="0 0 0 1" Padding="0 8 0 8" BorderBrush="#009688" Margin="-7 0 -7 -8">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <CheckBox Grid.Row="0" Grid.Column="0" IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="60" Height="40" HorizontalAlignment="Center" Padding="0" Margin="0"/>
+                                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Datetime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat='dd'}" Margin="0 0 0 5" Foreground="#009688"/>
+                                <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding Weekday, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10 0 0 5" Foreground="#009688"/>
+                                <TextBlock Grid.Row="0" Grid.Column="3" Text="{Binding Ticket, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="80" Margin="10 0 0 5" Foreground="#009688" />
+
+                                <ItemsControl Grid.Row="0" Grid.Column="4" Margin="20 -7 0 0" VerticalAlignment="Top" Width="320"
+                                              ItemsSource="{Binding Taxis, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" PreviewMouseWheel="ItemsControl_PreviewMouseWheel"
+                                              Grid.IsSharedSizeScope="True">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate DataType="{x:Type model:DiDiLine}">
+                                            <Border x:Name="Border" Padding="0 8 0 8" BorderThickness="0 0 0 1" BorderBrush="{DynamicResource MaterialDesignDivider}">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="*"/>
+                                                    </Grid.RowDefinitions>
+                                                    <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal">
+                                                        <TextBlock HorizontalAlignment="Left" Text="从 " Foreground="Gray"/>
+                                                        <TextBlock HorizontalAlignment="Left" Text="{Binding StartPoint, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" TextWrapping="Wrap" Foreground="#009688"/>
+                                                    </StackPanel>
+                                                    <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal">
+                                                        <TextBlock HorizontalAlignment="Left" Text="到 " Foreground="Gray"/>
+                                                        <TextBlock HorizontalAlignment="Left" Text="{Binding EndPoint, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" TextWrapping="Wrap" Foreground="#009688"/>
+                                                    </StackPanel>
+                                                    <StackPanel Grid.Column="0" Grid.Row="3" Orientation="Horizontal">
+                                                        <TextBlock HorizontalAlignment="Left" Text="里程: " Foreground="Gray"/>
+                                                        <TextBlock HorizontalAlignment="Left" Text="{Binding Miles, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Foreground="#009688"/>
+                                                        <TextBlock HorizontalAlignment="Left" Text="金额: " Foreground="Gray" Margin="20 0 0 0"/>
+                                                        <TextBlock HorizontalAlignment="Left" Text="{Binding Fee, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Foreground="#009688"/>
+                                                    </StackPanel>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                                <StackPanel Grid.Row="0" Grid.Column="5" Margin="20 0 0 0">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal">
+                                            <TextBlock HorizontalAlignment="Left" Text="酒店名: " Foreground="Gray"/>
+                                            <TextBlock HorizontalAlignment="Left" Text="{Binding HotelName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="200" TextWrapping="Wrap" Foreground="#009688"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal">
+                                            <TextBlock HorizontalAlignment="Left" Text="{Binding Book, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Foreground="#009688"/>
+                                            <TextBlock HorizontalAlignment="Left" Text="{Binding ReceiptType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" Foreground="#009688" Margin="20 0 0 0"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="0" Grid.Row="2" Orientation="Horizontal">
+                                            <TextBlock HorizontalAlignment="Left" Text="金   额: " Foreground="Gray"/>
+                                            <TextBlock HorizontalAlignment="Left" Text="{Binding Payment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" Foreground="#009688"/>
+                                        </StackPanel>
+                                        <Grid.Style>
+                                            <Style TargetType="Grid">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Payment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Value="0">
+                                                        <Setter Property="Visibility" Value="Hidden"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Grid.Style>
+                                    </Grid>
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="0" Grid.Column="6" Margin="20 0 20 0">
+                                    <TextBlock HorizontalAlignment="Left" Text="出差补贴: " Foreground="Gray"/>
+                                    <TextBox Height="30" IsReadOnly="False" Width="50" Foreground="#009688" HorizontalAlignment="Left"
+                                             Text="{Binding Path=Allowance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="12" materialDesign:TextFieldAssist.SuffixText="元"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

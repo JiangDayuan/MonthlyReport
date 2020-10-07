@@ -1,0 +1,121 @@
+﻿<UserControl x:Class="MonthlyReport.Views.Configuration"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MonthlyReport.Views"
+             mc:Ignorable="d" 
+             xmlns:converter="clr-namespace:MonthlyReport.Converters"
+             xmlns:model="clr-namespace:MonthlyReport.Models"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:prism="http://prismlibrary.com/"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             d:DesignHeight="800" d:DesignWidth="1600" FontFamily="Microsoft YaHei" 
+             IsEnabled="{Binding Path=UserControlEnable, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadCommand}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+
+    <ScrollViewer x:Name="Scroll" HorizontalAlignment="Center" Margin="20" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" CanContentScroll="False">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Row="0" Grid.Column="0" Margin="1 0 0 20" Height="30" Width="60" FontSize="12" Content="保存" HorizontalAlignment="Left"
+                    Foreground="White" Command="{Binding SaveCommand}" materialDesign:ButtonAssist.CornerRadius="15"
+                    Style="{StaticResource MaterialDesignRaisedAccentButton}" ToolTip="保存配置"/>
+            
+            <StackPanel Grid.Row="1" Grid.Column="0">
+                <StackPanel Orientation="Horizontal">
+                    <Label HorizontalAlignment="Left" Content="日期列:" HorizontalContentAlignment="Right" VerticalContentAlignment="Bottom" Width="120"/>
+                    <TextBox HorizontalAlignment="Left" Text="{Binding Config.Date, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10 0 0 0" Width="50" FontWeight="Black" FontSize="14" TextWrapping="Wrap" Foreground="#009688"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label HorizontalAlignment="Left" Content="星期列:" HorizontalContentAlignment="Right" VerticalContentAlignment="Bottom" Width="120"/>
+                    <TextBox HorizontalAlignment="Left" Text="{Binding Config.Week, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10 0 0 0" Width="50" FontWeight="Black" FontSize="14" TextWrapping="Wrap" Foreground="#009688"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label HorizontalAlignment="Left" Content="工作对应Ticket列:" HorizontalContentAlignment="Right" VerticalContentAlignment="Bottom" Width="120"/>
+                    <TextBox HorizontalAlignment="Left" Text="{Binding Config.Ticket, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10 0 0 0" Width="50" FontWeight="Black" FontSize="14" TextWrapping="Wrap" Foreground="#009688"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label HorizontalAlignment="Left" Content="汇报列:" HorizontalContentAlignment="Right" VerticalContentAlignment="Bottom" Width="120"/>
+                    <TextBox HorizontalAlignment="Left" Text="{Binding Config.Diary, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10 0 0 0" Width="50" FontWeight="Black" FontSize="14" TextWrapping="Wrap" Foreground="#009688"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label HorizontalAlignment="Left" Content="序号列:" HorizontalContentAlignment="Right" VerticalContentAlignment="Bottom" Width="120"/>
+                    <TextBox HorizontalAlignment="Left" Text="{Binding Config.Index, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10 0 0 0" Width="50" FontWeight="Black" FontSize="14" TextWrapping="Wrap" Foreground="#009688"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label HorizontalAlignment="Left" Content="起点地址列:" HorizontalContentAlignment="Right" VerticalContentAlignment="Bottom" Width="120"/>
+                    <TextBox HorizontalAlignment="Left" Text="{Binding Config.TaxiStart, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10 0 0 0" Width="50" FontWeight="Black" FontSize="14" TextWrapping="Wrap" Foreground="#009688"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label HorizontalAlignment="Left" Content="起点时间列:" HorizontalContentAlignment="Right" VerticalContentAlignment="Bottom" Width="120"/>
+                    <TextBox HorizontalAlignment="Left" Text="{Binding Config.TaxiTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10 0 0 0" Width="50" FontWeight="Black" FontSize="14" TextWrapping="Wrap" Foreground="#009688"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label HorizontalAlignment="Left" Content="终点地址列:" HorizontalContentAlignment="Right" VerticalContentAlignment="Bottom" Width="120"/>
+                    <TextBox HorizontalAlignment="Left" Text="{Binding Config.TaxiEnd, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10 0 0 0" Width="50" FontWeight="Black" FontSize="14" TextWrapping="Wrap" Foreground="#009688"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label HorizontalAlignment="Left" Content="打车方式列:" HorizontalContentAlignment="Right" VerticalContentAlignment="Bottom" Width="120"/>
+                    <TextBox HorizontalAlignment="Left" Text="{Binding Config.PayMethod, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10 0 0 0" Width="50" FontWeight="Black" FontSize="14" TextWrapping="Wrap" Foreground="#009688"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label HorizontalAlignment="Left" Content="打车公里列:" HorizontalContentAlignment="Right" VerticalContentAlignment="Bottom" Width="120"/>
+                    <TextBox HorizontalAlignment="Left" Text="{Binding Config.TaxiMile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10 0 0 0" Width="50" FontWeight="Black" FontSize="14" TextWrapping="Wrap" Foreground="#009688"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label HorizontalAlignment="Left" Content="打车费用列:" HorizontalContentAlignment="Right" VerticalContentAlignment="Bottom" Width="120"/>
+                    <TextBox HorizontalAlignment="Left" Text="{Binding Config.Fee, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10 0 0 0" Width="50" FontWeight="Black" FontSize="14" TextWrapping="Wrap" Foreground="#009688"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label HorizontalAlignment="Left" Content="旅馆名列:" HorizontalContentAlignment="Right" VerticalContentAlignment="Bottom" Width="120"/>
+                    <TextBox HorizontalAlignment="Left" Text="{Binding Config.HotelName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10 0 0 0" Width="50" FontWeight="Black" FontSize="14" TextWrapping="Wrap" Foreground="#009688"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label HorizontalAlignment="Left" Content="旅馆预定途径列:" HorizontalContentAlignment="Right" VerticalContentAlignment="Bottom" Width="120"/>
+                    <TextBox HorizontalAlignment="Left" Text="{Binding Config.Book, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10 0 0 0" Width="50" FontWeight="Black" FontSize="14" TextWrapping="Wrap" Foreground="#009688"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label HorizontalAlignment="Left" Content="旅馆费用列:" HorizontalContentAlignment="Right" VerticalContentAlignment="Bottom" Width="120"/>
+                    <TextBox HorizontalAlignment="Left" Text="{Binding Config.Payment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10 0 0 0" Width="50" FontWeight="Black" FontSize="14" TextWrapping="Wrap" Foreground="#009688"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label HorizontalAlignment="Left" Content="发票类型列:" HorizontalContentAlignment="Right" VerticalContentAlignment="Bottom" Width="120"/>
+                    <TextBox HorizontalAlignment="Left" Text="{Binding Config.Reciept, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10 0 0 0" Width="50" FontWeight="Black" FontSize="14" TextWrapping="Wrap" Foreground="#009688"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label HorizontalAlignment="Left" Content="出差津贴列:" HorizontalContentAlignment="Right" VerticalContentAlignment="Bottom" Width="120"/>
+                    <TextBox HorizontalAlignment="Left" Text="{Binding Config.Allowance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10 0 0 0" Width="50" FontWeight="Black" FontSize="14" TextWrapping="Wrap" Foreground="#009688"/>
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Grid.Row="1" Grid.Column="1" Margin="50 0 0 0">
+                <StackPanel Orientation="Horizontal">
+                    <Label HorizontalAlignment="Left" Content="打车支付方式默认值:" HorizontalContentAlignment="Right" VerticalContentAlignment="Bottom" Width="120"/>
+                    <TextBox HorizontalAlignment="Left" Text="{Binding Config.TaxiDefault, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10 0 0 0" Width="250" FontWeight="Black" FontSize="14" TextWrapping="Wrap" Foreground="#009688"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label HorizontalAlignment="Left" Content="每天行数:" HorizontalContentAlignment="Right" VerticalContentAlignment="Bottom" Width="120"/>
+                    <TextBox HorizontalAlignment="Left" Text="{Binding Config.RowCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10 0 0 0" Width="50" FontWeight="Black" FontSize="14" TextWrapping="Wrap" Foreground="#009688"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label HorizontalAlignment="Left" Content="汇报模板:" HorizontalContentAlignment="Right" VerticalContentAlignment="Bottom" Width="120"/>
+                    <TextBox HorizontalAlignment="Left" Text="{Binding Config.DiaryDefault, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10 5 3 0" Width="250" FontWeight="Black" FontSize="14" TextWrapping="Wrap" Foreground="#009688"
+                             AcceptsReturn="True" VerticalScrollBarVisibility="Auto" materialDesign:TextFieldAssist.HasOutlinedTextField="True" materialDesign:TextFieldAssist.DecorationVisibility="Collapsed"
+                             materialDesign:TextFieldAssist.TextFieldCornerRadius="4"/>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+</UserControl>
